@@ -21,5 +21,3 @@ struct FsWrap{
  * @param[out] wrapper:  wrapper object
  */
 int fswrap_open_sync(const char* path, const char* mode, FsWrap* wrapper);
-
-
