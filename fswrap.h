@@ -21,3 +21,12 @@ struct FsWrap{
  * @param[out] wrapper:  wrapper object
  */
 int fswrap_open_sync(const char* path, const char* mode, FsWrap* wrapper);
+
+/**
+ * Write file
+ *
+ * @param[in]  buf:      path to file
+ * @param[in]  buf_size: size of buf     
+ * @param[in] wrapper:   wrapper object
+ */
+int fswrap_write_sync(void* buf, const size_t buf_size, const FsWrap* wrapper);

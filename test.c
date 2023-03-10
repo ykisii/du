@@ -25,13 +25,23 @@ void param_test() {
 
     ret = expect_eq_int(0, fswrap_open_sync("./test.txt", "w", &fswp));
     if (!ret) printf("error %d %d\n",ret, __LINE__);
+    
+    ret = expect_eq_int(FSW_PARAM_ERROR, fswrap_write_sync(NULL, 0, &fswp));
+    if (!ret) printf("error %d %d\n",ret, __LINE__);
+
+    char buf[] = "aa55";
+    ret = expect_eq_int(FSW_PARAM_ERROR, fswrap_write_sync(buf, sizeof(buf), NULL));
+    if (!ret) printf("error %d %d\n",ret, __LINE__);
+    fswp.fp = NULL;
+    ret = expect_eq_int(FSW_PARAM_ERROR, fswrap_write_sync(buf, sizeof(buf), &fswp));
+    if (!ret) printf("error %d %d\n",ret, __LINE__);
 }
 
 void open_test() {
     FsWrap fswp = {0};
     int ret = 0;
 
-    ret = expect_eq_int(ENOENT, fswrap_open_sync("./a.txt", "r", &fswp));
+    ret = expect_eq_int(ENOENT, fswrap_open_sync("./open.txt", "r", &fswp));
     if (!ret) printf("error %d %d\n",ret, __LINE__);
     ret = expect_eq_int(0, fswrap_open_sync("./a.txt", "w", &fswp));
     if (!ret) printf("error %d %d\n",ret, __LINE__);
@@ -39,10 +49,22 @@ void open_test() {
     if (!ret) printf("error %d %d\n",ret, __LINE__);
 }
 
+void write_test() {
+   FsWrap fswp = {0};
+   int ret = 0;
+   ret = expect_eq_int(0, fswrap_open_sync("./write.txt", "w", &fswp));
+   if (!ret) printf("error %d %d\n",ret, __LINE__);
+
+   char buf[] = "aa55";
+   ret = expect_eq_int(0, fswrap_write_sync(buf, sizeof(buf), &fswp));
+   if (!ret) printf("error %d %d\n",ret, __LINE__);
+}
+
 int main() {
     printf("[test begin]\n");
     param_test();
     open_test();
+    write_test();
     printf("[test end]\n");
     return 0;
 }
