@@ -17,18 +17,13 @@ int fswrap_open_sync(const char* path, const char* mode, FsWrap* wrapper) {
     return 0;
 }
 
-int fswrap_write_sync(void* buf, const size_t buf_size, const FsWrap* wrapper) {
+int fswrap_write_sync(const void* buf, const size_t size, const size_t count, const FsWrap* wrapper) {
     if (!buf || !wrapper || !wrapper->fp)
 	return FSW_PARAM_ERROR;
 
-    printf("buf_size[%ld]\n", buf_size);
-    /* for (int i = 0; i < buf_size; i++) { */
-    /* 	size_t ret = 0; */
-    /* 	size_t count = 1; */
+    size_t ret = fwrite(buf, size, count, wrapper->fp);
+    if (ret != count)
+	return errno;
 
-    /* 	ret = fwrite(buf[i], sizeof(char), count, wrapper->fp); */
-    /* 	if (ret != count) */
-    /* 	    return errno; */
-    /* } */
     return 0;
 }
