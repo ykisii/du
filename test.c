@@ -13,16 +13,24 @@ int expect_eq_str(char* l, char* r) {
     return !strcmp(l, r);
 }
 
-
 int main() {
     printf("[test begin]\n");
     const char *pattern = "*";
     const char *path = "./";
-    DU* du = du_init();
+    DirUtil* du = du_init();
+    
+    if (!du) return 0;
+    
     char** list = du->get_current(path, pattern);
-    if (*list) {
-	
+
+    if (list) {
+	unsigned int i = 0;
+	while (list[i] != NULL) {
+	    printf("[%s]\n", list[i]);
+	    i++;
+	}
     }
+    du->close();
     printf("[test end]\n");
     return 0;
 }

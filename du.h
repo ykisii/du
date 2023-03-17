@@ -7,17 +7,20 @@
  */
 typedef char** (*du_getcur)(const char* path, const char* pattern);
 
+/**
+ * close terminate du structure
+ */
+typedef void (*du_close)(void);
+
 typedef struct _du{
     du_getcur get_current;
+    du_close  close;
     size_t    buff_size;
 } DirUtil;
 
 /**
- * init du structure
- * return: pointer to du structure
+ * Initialize Dirent Util Object
+ *
+ * return: pointer to DirUtil Structure
  */
 DirUtil* du_init(void);
-/**
- * close terminate du structure
- */
-void du_close(void);
