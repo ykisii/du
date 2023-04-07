@@ -21,7 +21,7 @@ int main() {
     
     if (!du) return 0;
     
-    char** list = du->get_current(path, pattern);
+    char** list = du->get(path, pattern);
 
     if (list) {
 	unsigned int i = 0;

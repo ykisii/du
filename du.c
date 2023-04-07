@@ -7,13 +7,13 @@
 #define DEFAULT_BUF_SIZE (128)
 
 static DirUtil *du;
-static char** get_current(const char* path, const char* pattern);
+static char** get(const char* path, const char* pattern);
 static void close(void);
 
 DirUtil* du_init(void) {
   if (!du) {
     du = (DirUtil*)malloc(sizeof(DirUtil));
-    du->get_current = get_current;
+    du->get = get;
     du->close = close;
     du->buff_size = DEFAULT_BUF_SIZE;
   }
@@ -29,7 +29,7 @@ void close(void) {
 }
 
 static
-char** get_current(const char* path, const char* pattern) {
+char** get(const char* path, const char* pattern) {
   if (!path || !du) return NULL;
     DIR *dp = opendir(path);
     struct dirent *dirent;
