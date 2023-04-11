@@ -21,6 +21,14 @@ DirUtil* du_init(void) {
 }
 
 static
+char** du_alloc_buff(const size_t size) {
+  if (size <= 0) {
+    return NULL;
+  } 
+  return (char**)malloc(sizeof(char*) * size);
+}
+
+static
 void du_close_obj(void) {
   if (du) {
     free(du);
@@ -31,13 +39,18 @@ void du_close_obj(void) {
 static
 char** du_get_names(const char* path, const char* pattern) {
   if (!path || !du) return NULL;
-  DIR *dp = opendir(path);
-  struct dirent *dirent;
-  char** names = NULL;
-  names = (char**)malloc(sizeof(char*) * du->buff_size);
+  
+  char** names = du_alloc_buff(sizeof(char*) * du->buff_size);
+  if (!names) return NULL;
+
   size_t count = du->buff_size;
   unsigned int i = 0;
   memset(names, 0, (sizeof(char*) * du->buff_size));
+  
+  DIR *dp = opendir(path);
+  if (!dp) return NULL;
+  struct dirent *dirent;
+
   while((dirent = readdir(dp)) != NULL) {
     if (count <= 0) {
       printf("reallocate buffer\n");

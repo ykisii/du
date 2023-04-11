@@ -4,33 +4,50 @@
 #include "du.h"
 
 #define EXPECT_EQ_STR(l,r) \
-    do {  strcmp(l,r) ? printf("* error "#r"\n") : printf("success "#r"\n"); } while (0)
+    do {  strcmp(l,r) ? printf("\t* error "#r"\n") : printf("\tsuccess "#r"\n"); } while (0)
 
 #define EXPECT_EQ_NUM(l,r) \
-    do {  (l == r) ? printf("success "#r"\n") : printf("* error"#r"\n"); } while (0)
+    do {  (l == r) ? printf("\tsuccess "#r"\n") : printf("\t* error"#r"\n"); } while (0)
 
 int expect_eq_str(char* l, char* r) {
     return !strcmp(l, r);
 }
 
-int main() {
-    printf("[test begin]\n");
-    const char *pattern = "*";
-    const char *path = "./";
-    DirUtil* du = du_init();
+static void t_path_is_null(void) {
+  printf("[path is null]\n");
+  const char *pattern = "*";
+  const char *path = "./ho";
+  DirUtil* du = du_init();
     
-    if (!du) return 0;
+  if (!du) return;
     
-    char** list = du->get(path, pattern);
+  char** list = du->get(path, pattern);
+  EXPECT_EQ_NUM(list, NULL);
+  du->close();
+}
 
-    if (list) {
-	unsigned int i = 0;
-	while (list[i] != NULL) {
+static void t_print_dir(const char* path) {
+  const char *pattern = "*";
+  DirUtil* du = du_init();
+    
+  if (!du) return;
+    
+  char** list = du->get(path, pattern);
+
+  if (list) {
+	  unsigned int i = 0;
+	  while (list[i] != NULL) {
 	    printf("[%s]\n", list[i]);
 	    i++;
-	}
-    }
-    du->close();
+	  }
+  }
+  du->close();
+}
+
+int main() {
+    printf("[test begin]\n");
+    t_print_dir("./");
+    t_path_is_null();
     printf("[test end]\n");
     return 0;
 }
