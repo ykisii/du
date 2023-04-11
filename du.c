@@ -31,36 +31,36 @@ void close(void) {
 static
 char** get(const char* path, const char* pattern) {
   if (!path || !du) return NULL;
-    DIR *dp = opendir(path);
-    struct dirent *dirent;
-    char** names = NULL;
-    names = (char**)malloc(sizeof(char*) * du->buff_size);
-    size_t count = du->buff_size;
-    unsigned int i = 0;
-    memset(names, 0, (sizeof(char*) * du->buff_size));
-    while((dirent = readdir(dp)) != NULL) {
-      if (count <= 0) {
-        printf("reallocate buffer\n");
-        char** tmp = (char**)realloc(names, sizeof(char*) * du->buff_size);
-        if (!tmp) {
-          free(names);
-          return NULL;
-        }
-        names = tmp;
-      }
-      size_t len = strlen(dirent->d_name);
-      char* tmp = (char*)malloc(sizeof(char) * len+1);
+  DIR *dp = opendir(path);
+  struct dirent *dirent;
+  char** names = NULL;
+  names = (char**)malloc(sizeof(char*) * du->buff_size);
+  size_t count = du->buff_size;
+  unsigned int i = 0;
+  memset(names, 0, (sizeof(char*) * du->buff_size));
+  while((dirent = readdir(dp)) != NULL) {
+    if (count <= 0) {
+      printf("reallocate buffer\n");
+      char** tmp = (char**)realloc(names, sizeof(char*) * du->buff_size);
       if (!tmp) {
-        printf("allocation error\n");
         free(names);
         return NULL;
       }
-      names[i] = tmp;
-      memset(names[i], 0, len+1);
-      strncpy(names[i], dirent->d_name, len);
-      count--;
-      i++;
+      names = tmp;
     }
-    names[i] = NULL;
-    return names;
+    size_t len = strlen(dirent->d_name);
+    char* tmp = (char*)malloc(sizeof(char) * len+1);
+    if (!tmp) {
+      printf("allocation error\n");
+      free(names);
+      return NULL;
+    }
+    names[i] = tmp;
+    memset(names[i], 0, len+1);
+    strncpy(names[i], dirent->d_name, len);
+    count--;
+    i++;
+  }
+  names[i] = NULL;
+  return names;
 }
