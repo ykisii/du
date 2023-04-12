@@ -20,6 +20,23 @@ DirUtil* du_init(void) {
   return du;
 }
 
+static unsigned int du_set_name(const char*name, char** list, const int index) {
+  if (!name || !list) {
+    return -1;
+  }
+  size_t len = strlen(name);
+  char* tmp = (char*)malloc(sizeof(char) * len+1);
+  if (!tmp) {
+    printf("allocation error\n");
+    free(list);
+    return -1;
+  }
+  list[index] = tmp;
+  memset(list[index], 0, len+1);
+  strncpy(list[index], name, len);
+  return index;
+}
+
 static
 char** du_alloc_buff(const size_t size) {
   if (size <= 0) {
@@ -61,16 +78,9 @@ char** du_get_names(const char* path, const char* pattern) {
       }
       names = tmp;
     }
-    size_t len = strlen(dirent->d_name);
-    char* tmp = (char*)malloc(sizeof(char) * len+1);
-    if (!tmp) {
-      printf("allocation error\n");
-      free(names);
+    if (du_set_name(dirent->d_name, names, i) < 0) {
       return NULL;
     }
-    names[i] = tmp;
-    memset(names[i], 0, len+1);
-    strncpy(names[i], dirent->d_name, len);
     count--;
     i++;
   }
