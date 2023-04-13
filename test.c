@@ -51,7 +51,7 @@ static void t_print_dir(const char* path) {
   if (list) {
 	  unsigned int i = 0;
 	  while (list[i] != NULL) {
-	    printf("[%s]\n", list[i]);
+	    printf("\t[%d:%s]\n",i, list[i]);
 	    i++;
 	  }
   }

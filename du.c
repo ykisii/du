@@ -4,7 +4,7 @@
 #include <string.h>
 #include "du.h"
 
-#define DEFAULT_BUF_SIZE (128)
+#define DEFAULT_BUF_SIZE (2)
 
 static DirUtil *du;
 static char** du_get_names(const char* path, const char* pattern);
@@ -20,7 +20,7 @@ DirUtil* du_init(void) {
   return du;
 }
 
-static unsigned int du_set_name(const char*name, char** list, const int index) {
+static signed int du_set_name(const char*name, char** list, const int index) {
   if (!name || !list) {
     return -1;
   }
@@ -42,7 +42,22 @@ char** du_alloc_buff(const size_t size) {
   if (size <= 0) {
     return NULL;
   } 
-  return (char**)malloc(sizeof(char*) * size);
+  return (char**)malloc(size);
+}
+
+static
+char** du_realloc_buff(char** buf, size_t size) {
+  if (size <= 0) {
+    return NULL;
+  }
+  char** tmp = (char**)realloc(buf, size);
+  if (!tmp) {
+    free(buf);
+    return NULL; 
+  }
+  buf = tmp;
+  tmp = NULL;
+  return buf;
 }
 
 static
@@ -60,7 +75,7 @@ char** du_get_names(const char* path, const char* pattern) {
   char** names = du_alloc_buff(sizeof(char*) * du->buff_size);
   if (!names) return NULL;
 
-  size_t count = du->buff_size;
+  //size_t count = du->buff_size;
   unsigned int i = 0;
   memset(names, 0, (sizeof(char*) * du->buff_size));
   
@@ -69,19 +84,17 @@ char** du_get_names(const char* path, const char* pattern) {
   struct dirent *dirent;
 
   while((dirent = readdir(dp)) != NULL) {
-    if (count <= 0) {
-      printf("reallocate buffer\n");
-      char** tmp = (char**)realloc(names, sizeof(char*) * du->buff_size);
-      if (!tmp) {
-        free(names);
-        return NULL;
-      }
-      names = tmp;
+    if (i >= du->buff_size) {
+      size_t realloc_size = du->buff_size + du->buff_size;
+      names = du_realloc_buff(names, (sizeof(char*) * realloc_size));
+      printf(" reallosize[%ld] names[%p] i[%d]\n ", realloc_size, names, i);
+      if (!names) return NULL;
+      du->buff_size = realloc_size;
+      //count = du->buff_size;
     }
     if (du_set_name(dirent->d_name, names, i) < 0) {
       return NULL;
     }
-    count--;
     i++;
   }
   names[i] = NULL;
