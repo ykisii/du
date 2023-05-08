@@ -84,6 +84,9 @@ char** du_get_names(const char* path, const char* pattern) {
   struct dirent *dirent;
 
   while((dirent = readdir(dp)) != NULL) {
+    if ((strncmp(".", dirent->d_name, 1) == 0) || (strncmp("..", dirent->d_name, 2) == 0)) {
+      continue;
+    }
     if (i >= du->buff_size) {
       size_t realloc_size = du->buff_size + du->buff_size;
       names = du_realloc_buff(names, (sizeof(char*) * realloc_size));
