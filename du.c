@@ -21,7 +21,7 @@ DirUtil* du_init(void) {
   return du;
 }
 
-static signed int du_set_name(const char*name, const char* pattern, char** list, const int index) {
+static signed int du_set_name(const char*name, char** list, const int index) {
   if (!name || !list) {
     return -1;
   }
@@ -104,7 +104,19 @@ char** du_get_names(const char* path, const char* pattern) {
       du->buff_size = realloc_size;
       //count = du->buff_size;
     }
-    if (du_set_name(dirent->d_name, pattern, names, i) < 0) {
+    bool valid_name = false;
+    if (pattern) {
+      if (match(pattern, strlen(pattern), dirent->d_name, strlen(dirent->d_name))) {
+        valid_name = true;
+      }
+    }
+    else {
+      valid_name = true;
+    }
+    if (!valid_name) {
+      continue;
+    }
+    if (du_set_name(dirent->d_name, names, i) < 0) {
       return NULL;
     }
     i++;
