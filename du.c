@@ -70,17 +70,23 @@ void du_close_obj(void) {
 
 static
 char** du_get_names(const char* path, const char* pattern) {
-  if (!path || !du) return NULL;
+  if (!path || !du) {
+    return NULL;
+  }
   
   char** names = du_alloc_buff(sizeof(char*) * du->buff_size);
-  if (!names) return NULL;
+  if (!names) {
+    return NULL;
+  }
 
   //size_t count = du->buff_size;
   unsigned int i = 0;
   memset(names, 0, (sizeof(char*) * du->buff_size));
   
   DIR *dp = opendir(path);
-  if (!dp) return NULL;
+  if (!dp) {
+    return NULL;
+  }
   struct dirent *dirent;
 
   while((dirent = readdir(dp)) != NULL) {
@@ -91,7 +97,9 @@ char** du_get_names(const char* path, const char* pattern) {
       size_t realloc_size = du->buff_size + du->buff_size;
       names = du_realloc_buff(names, (sizeof(char*) * realloc_size));
       printf(" reallosize[%ld] names[%p] i[%d]\n ", realloc_size, names, i);
-      if (!names) return NULL;
+      if (!names) {
+        return NULL;
+      }
       du->buff_size = realloc_size;
       //count = du->buff_size;
     }
