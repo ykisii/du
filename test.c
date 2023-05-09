@@ -39,6 +39,21 @@ static void t_path_is_null(void) {
   du->close();
 }
 
+static void t_pattern_match(const char* pattern, const char* path) {
+  printf("[%s]\n", __func__);
+  DirUtil* du = du_init();
+  if (!du) return;
+
+  char** list = du->get(path, pattern);
+  if (list) {
+    unsigned int i = 0;
+    while (list[i] != NULL) {
+      printf("\t[%d:%s]\n", i, list[i]);
+      i++;
+    }
+  }
+}
+
 static void t_print_dir(const char* path) {
   printf("[%s]\n", __func__);
   const char *pattern = "*";
@@ -63,6 +78,8 @@ int main() {
     t_print_dir("./");
     t_path_is_null();
     t_path_is_invalid();
+    t_pattern_match("*.c", "./");
+    t_pattern_match("d*", "./");
     printf("[test end]\n");
     return 0;
 }
