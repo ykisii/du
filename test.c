@@ -52,6 +52,7 @@ static void t_pattern_match(const char* pattern, const char* path) {
       i++;
     }
   }
+  du->close();
 }
 
 static void t_print_dir(const char* path) {
